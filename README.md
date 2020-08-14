@@ -18,4 +18,5 @@ You will be needing NodeJS. In folder server just run:
 - post an image to be analized by others
 - analized other users images
 - can analize users full name, age, country and give rate from 0 to 5 stars
+- add comment to image (max 255 chars)
 - see analized resoults in graph maner
