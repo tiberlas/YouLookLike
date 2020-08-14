@@ -1,0 +1,3 @@
+# ignore JS dependencyes
+node_modules
+log
