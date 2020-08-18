@@ -48,15 +48,118 @@ export class UserDataMongo implements UserData {
 			this.monogdb()
 				.then(() => {
 					mongoClient
-						.db()
-						.collection(collectionName)
-						.find()
-						.toArray((err: any, doqu: any) => {
-							mongoClient.close();
-							resolve(doqu);
-						});
+					.db()
+					.collection(collectionName)
+					.find()
+					.toArray((err: any, doqu: any) => {
+						mongoClient.close();
+						resolve(doqu);
+					});
 				})
-				.catch((err) => reject(err));
+				.catch((err) => {
+					console.log('ERR: ', err);
+					reject(err)
+				});
+		});
+	}
+
+	getUsers() : Promise<UserModel[]> {
+		return new Promise((resolve, reject) => {
+			this.monogdb()
+				.then(() => {
+					mongoClient
+					.db()
+					.collection(collectionName)
+					.find({isApproved: true, role: 'USER', isDeleted: false})
+					.toArray((err: any, doqu: any) => {
+						mongoClient.close();
+						resolve(doqu);
+					});
+				})
+				.catch((err) => {
+					console.log('ERR: ', err);
+					reject(err)
+				});
+		});
+	}
+
+	getAdmins() : Promise<UserModel[]> {
+		return new Promise((resolve, reject) => {
+			this.monogdb()
+				.then(() => {
+					mongoClient
+					.db()
+					.collection(collectionName)
+					.find({isApproved: true, isActive: true, role: 'ADMIN', isDeleted: false})
+					.toArray((err: any, doqu: any) => {
+						mongoClient.close();
+						resolve(doqu);
+					});
+				})
+				.catch((err) => {
+					console.log('ERR: ', err);
+					reject(err)
+				});
+		});
+	}
+
+	getActiveUsers() : Promise<UserModel[]> {
+		return new Promise((resolve, reject) => {
+			this.monogdb()
+				.then(() => {
+					mongoClient
+					.db()
+					.collection(collectionName)
+					.find({isApproved: true, isActive: true, role: 'USER', isDeleted: false})
+					.toArray((err: any, doqu: any) => {
+						mongoClient.close();
+						resolve(doqu);
+					});
+				})
+				.catch((err) => {
+					console.log('ERR: ', err);
+					reject(err)
+				});
+		});
+	}
+
+	getBandedUsers() : Promise<UserModel[]> {
+		return new Promise((resolve, reject) => {
+			this.monogdb()
+			.then(() => {
+				mongoClient
+				.db()
+				.collection(collectionName)
+				.find({isActive: false, isDeleted: false})
+				.toArray((err: any, doqu: any) => {
+					mongoClient.close();
+					resolve(doqu);
+				});
+			})
+			.catch((err) => {
+				console.log('ERR: ', err);
+				reject(err)
+			});
+		});
+	}
+
+	getRegistrationRequests() : Promise<UserModel[]> {
+		return new Promise((resolve, reject) => {
+			this.monogdb()
+			.then(() => {
+				mongoClient
+				.db()
+				.collection(collectionName)
+				.find({isApproved: false, isDeleted: false})
+				.toArray((err: any, doqu: any) => {
+					mongoClient.close();
+					resolve(doqu);
+				});
+			})
+			.catch((err) => {
+				console.log('ERR: ', err);
+				reject(err)
+			});
 		});
 	}
 
@@ -67,10 +170,30 @@ export class UserDataMongo implements UserData {
 					mongoClient
 						.db()
 						.collection(collectionName)
-						.find({ _id: id })
+						.find({ _id: id, isDeleted: false })
 						.toArray((err: any, doqu: any) => {
 							mongoClient.close();
 							resolve(doqu);
+						});
+				})
+				.catch((err) => reject(err));
+		});
+	}
+
+	getByEmailAndPassword(email: string, password: string): Promise<UserModel> {
+		return new Promise((resolve, reject) => {
+			this.monogdb()
+				.then(() => {
+					mongoClient
+						.db()
+						.collection(collectionName)
+						.findOne({email: email, password: password, isDeleted: false}, (err, doqu) => {
+							mongoClient.close();
+							if (err) {
+								reject(err);
+							} else {
+								resolve(doqu);
+							}
 						});
 				})
 				.catch((err) => reject(err));
@@ -137,6 +260,38 @@ export class UserDataMongo implements UserData {
 						.then(() => {
 							mongoClient.close();
 							resolve(true);
+						});
+				})
+				.catch((err) => reject(err));
+		});
+	}
+
+	existEmail(email: string): Promise<boolean> {
+		return new Promise((resolve, reject) => {
+			this.monogdb()
+				.then(() => {
+					mongoClient
+						.db()
+						.collection(collectionName)
+						.findOne({ email: email, isDeleted: false }, (err, doqu) => {
+							mongoClient.close();
+							resolve(doqu?true:false);
+						});
+				})
+				.catch((err) => reject(err));
+		});
+	}
+
+	existUserName(userName: string): Promise<boolean> {
+		return new Promise((resolve, reject) => {
+			this.monogdb()
+				.then(() => {
+					mongoClient
+						.db()
+						.collection(collectionName)
+						.findOne({ userName: userName, isDeleted: false }, (err, doqu) => {
+							mongoClient.close();
+							resolve(doqu?true:false);
 						});
 				})
 				.catch((err) => reject(err));

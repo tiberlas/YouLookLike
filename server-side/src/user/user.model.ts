@@ -1,9 +1,8 @@
-import { InfoLogger } from '../comon/info_logger';
+import { InfoLogger } from '../common/info_logger';
 
 export enum ROLE {
-	OWNER,
-	BUYER,
-	ADMIN,
+	USER='USER',
+	ADMIN='ADMIN'
 }
 
 export class UserModel extends InfoLogger {

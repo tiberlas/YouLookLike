@@ -1,108 +1,69 @@
 import express from 'express';
+import { UserModel } from '../user.model';
+import { UserData } from '../user.data';
 
-// const userRequests: UserRequestData = new UserRequestData();
-// const buyers = require('../buyer/buyer.data');
-const router = express.Router();
+enum FIELD {
+	ROLE="ROLE",
+	ACTIVE="ACTIVE",
+	DELETED="DELETED",
+};
 
-// router.get('/registration-request', (req, res) => {
-// 	let msg: UserRequestModel[] | string;
-// 	let statusNumber: number = 200;
+export const adminRest = (userData: UserData): express.Router => {
+	const router = express.Router();
 
-// 	try {
-// 		let status: string = req.params.status;
-// 		switch (status) {
-// 			case 'unregistrated':
-// 				msg = userRequests.getUnregisterd();
-// 				break;
-// 			case 'registrated':
-// 				msg = userRequests.getRegistered();
-// 				break;
-// 			default:
-// 				msg = userRequests.getAll();
-// 		}
-// 	} catch (err) {
-// 		console.log(err);
-// 		msg = 'Internal server error';
-// 		statusNumber = 501;
-// 	}
+	router.get('/registration', async(req, res) => {
+		let status: number = 503;
+		let msg: string | UserModel[] = 'DB IS NOT CONNECTED';
 
-// 	return res.status(statusNumber).json(msg);
-// });
+		await userData.getAll()
+			.then((res: UserModel[]) => {
+				status = 200;
+				msg = res;
+			}).catch((err) => {
+				console.log(err);
+			});
 
-// router.post('/registration-request', (req, res) => {
-// 	let msg: string = '';
-// 	let status: number = 201;
-// 	const user: UserRequestModel = req.body;
+			return res.status(status).json(msg);
+		});
 
-// 	if (validateAccount(user) == true) {
-// 		try {
-// 			userRequests.add(user);
-// 			msg = 'CREATER REGISTRATION REQUEST';
-// 		} catch (err) {
-// 			msg = err.err;
-// 			status = 406;
-// 		}
-// 	} else {
-// 		status = 406;
-// 		msg = 'INVALID USERNAME OR EMAIL';
-// 	}
+	router.delete('/registration', async(req, res) => {
+		const id:string = req.params.id;
+		let status: number = 503;
+		let msg: string = 'DB IS NOT CONNECTED';
 
-// 	return res.status(status).json(msg);
-// });
+		await userData.getById(id)
+			.then(async(res: UserModel) => {
+				if(!res) {
+					status = 406;
+					msg = 'USER DOSE NOT EXIST';
+				} else {
+					res.isDeleted = true;
+					
+					await userData.updateUser(res)
+					.then(() => {
+						status = 200;
+						msg = 'DELETED USER';
+					});
+				}
+			}).catch((err) => {
+				console.log(err);
+			});
 
-// router.put('/registration-request', (req, res) => {
-// 	let msg: string = '';
-// 	let status: number = 201;
-// 	const userId: string = req.body.id;
-// 	const user: UserRequestModel | null = userRequests.getWithId(userId);
+		return res.status(status).json(msg);
+	});
 
-// 	if (user != null) {
-// 		try {
-// 			userRequests.approve(userId);
-// 			if (user.isOwner == false) {
-// 				buyers.push(createBuyer(user));
-// 				msg = 'CREATER BUYER';
-// 			} else {
-// 				//add to owner data
-// 				msg = 'CREATER OWNER';
-// 			}
-// 		} catch (err) {
-// 			msg = err;
-// 			status = 406;
-// 		}
-// 	} else {
-// 		msg = 'INVALID USER ID';
-// 		status = 406;
-// 	}
+	router.put('/users', async(req, res) => {
+		const id:string = req.body.id;
+		const field: string = req.body.field;
+		const value: string|boolean = req.body.value;
+		
+		let status: number = 503;
+		let msg: string | UserModel[] = 'DB IS NOT CONNECTED';
 
-// 	return res.status(status).json(msg);
-// });
+		// await userData.updateUser();
 
-// router.delete('/registration-request/:id', (req, res) => {
-// 	let id: string = req.params.id;
-// 	userRequests.remove(id);
-// 	return res.status(200).send();
-// });
+	});
 
-// const validateAccount = (account: UserRequestModel): boolean => {
-// 	if (
-// 		account.email &&
-// 		account.userName &&
-// 		account.isOwner !== undefined &&
-// 		account.email.trim() !== '' &&
-// 		account.userName.trim() !== '' &&
-// 		account.email.indexOf('@') != -1
-// 	) {
-// 		return true;
-// 	} else {
-// 		return false;
-// 	}
-// };
+	return router
+}
 
-// const createBuyer = (user: UserRequestModel): BuyerModel => {
-// 	let buyer: BuyerModel = new BuyerModel(user.userName, user.email, 123456);
-
-// 	return buyer;
-// };
-
-module.exports = router;

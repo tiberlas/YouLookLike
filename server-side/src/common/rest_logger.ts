@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 
-class RestLogger {
+export class RestLogger {
 	private filePath: string = path.join(
 		__dirname,
 		'..',
@@ -13,20 +13,26 @@ class RestLogger {
 	log(method: string, url: string, user: string): void {
 		let now = Date();
 		let msg: string =
-			now + ' user: ' + user + ' url: ' + method + ' ' + url + '\n';
+			now + ' url: ' + method + ' ' + url + '\tuser: ' + user + '\n';
+		let dir = './log';
 
 		fs.appendFile(this.filePath, msg, (err) => {
 			if (err) {
 				if (err.code == 'ENOENT') {
-					//file dosent exist
+					//file dose not exist
+					if(!fs.existsSync(dir)){
+						fs.mkdirSync(dir);
+					}
+
 					fs.writeFile(this.filePath, msg, (err) => {
-						if (err) {
-							console.log('COULD NOT OPEN LOGGER FILE');
+						if(err) {
+							console.log('COULD NOT OPEN LOGGER DIR');
 							throw err;
 						} else {
 							console.log(msg);
 						}
 					});
+					
 				} else {
 					console.log('COULD NOT OPEN LOGGER FILE');
 					throw err;
@@ -43,6 +49,3 @@ class RestLogger {
 		} catch (err) {}
 	}
 }
-
-const restLogger = new RestLogger();
-module.exports = restLogger;

@@ -1,10 +1,15 @@
-const restLogger = require('../comon/rest_logger');
+import { RestLogger } from '../common/rest_logger';
 
-const logger = (req: any, res: any, next: any) => {
-	req.get;
+export const restLogger = (req: any, res: any, next: any): void => {
 
-	restLogger.log(req.method, req.path, 'test');
+	//TODO: from JWT read user name
+	const restLogger: RestLogger = new RestLogger();
+	restLogger.log(req.method, req.path, 'NOT REGISTERED');
+
 	next();
 };
 
-module.exports = logger;
+export const deleteLoggerFile = (): void => {
+	const restLogger: RestLogger = new RestLogger();
+	restLogger.deleteFile();
+}
