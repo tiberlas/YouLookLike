@@ -24,10 +24,10 @@ export class RestLogger {
 						fs.mkdirSync(dir);
 					}
 
-					fs.writeFile(this.filePath, msg, (err) => {
-						if(err) {
+					fs.writeFile(this.filePath, msg, (err2) => {
+						if(err2) {
 							console.log('COULD NOT OPEN LOGGER DIR');
-							throw err;
+							throw err2;
 						} else {
 							console.log(msg);
 						}

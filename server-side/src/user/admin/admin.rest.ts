@@ -16,9 +16,9 @@ export const adminRest = (userData: UserData): express.Router => {
 		let msg: string | UserModel[] = 'DB IS NOT CONNECTED';
 
 		await userData.getAll()
-			.then((res: UserModel[]) => {
+			.then((data: UserModel[]) => {
 				status = 200;
-				msg = res;
+				msg = data;
 			}).catch((err) => {
 				console.log(err);
 			});
@@ -32,14 +32,14 @@ export const adminRest = (userData: UserData): express.Router => {
 		let msg: string = 'DB IS NOT CONNECTED';
 
 		await userData.getById(id)
-			.then(async(res: UserModel) => {
+			.then(async(data: UserModel) => {
 				if(!res) {
 					status = 406;
 					msg = 'USER DOSE NOT EXIST';
 				} else {
-					res.isDeleted = true;
+					data.isDeleted = true;
 					
-					await userData.updateUser(res)
+					await userData.updateUser(data)
 					.then(() => {
 						status = 200;
 						msg = 'DELETED USER';

@@ -10,11 +10,16 @@ describe('Mongo data base', () => {
 		mongo = new UserDataMongo();
 	});
 
-	it('test connection', () => {
-		mongo
-			.printAll()
-			.then(() => {assert.isTrue})
-			.catch(() => {assert.isFalse});
+	it('test connection', async() => {
+		
+		try {
+
+			await mongo.printAll();
+			assert.isTrue(true);
+		} catch(err) {
+			assert.isTrue(false);
+			throw err;
+		}
 	});
 
 	it('test insertion', async () => {
@@ -23,12 +28,15 @@ describe('Mongo data base', () => {
 		try {
 
 			const totalBefore:number = (await mongo.getAll()).length;
-			await mongo.createUser(newUser);
+			let id:string = await mongo.createUser(newUser);
 			const totalAfter:number = (await mongo.getAll()).length;
 
-			assert.equal(totalAfter, totalBefore);
+			assert.equal(totalAfter, totalBefore + 1);
+
+			await mongo.deleteUser(id);
 		} catch(err) {
-			assert.isFalse
+			assert.isTrue(false);
+			throw err;
 		}
 	});
 });

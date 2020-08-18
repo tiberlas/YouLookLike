@@ -39,10 +39,10 @@ export const userRest = (userData: UserData) => {
 		let status: number = 406;
 
 		userData.getByEmailAndPassword(email, password)
-			.then((res) => {
-				if(res != null && res != undefined) {
+			.then((userId) => {
+				if(userId != null && userId != undefined) {
 					status = 202;
-					msg = `LOGGED IN SUCCESS; USER ID: ${res}`;
+					msg = `LOGGED IN SUCCESS; USER ID: ${userId}`;
 				}
 			}).catch((err) => {
 				status = 503;
