@@ -1,0 +1,23 @@
+use you_look_like
+
+db.user_requests.insert({
+		"isApproved": false,
+		"isDeleted": false,
+		"userName": "e.peters",
+		"email": "e.petersi@maildrop.cc",
+		"password": "u1f37a",
+		"name": "eva",
+		"surname": "peters",
+		"nickname": "petty",
+		"birthDay": new Date(1971, 5, 20),
+		"hight": { "value": 160, "unit": "CENTIMETERS" },
+		"weight": { "value": 50, "unit": "KILOGRAMS" },
+		"userId": "1363",
+		"profileImagePath": "ANONYMOUS"
+	})
+
+db.user_requests.insert()
+
+db.user_requests.find().pretty()
+
+db.user_requests.remove({_id: })

@@ -1,0 +1,65 @@
+swagger: "2.0"
+info:
+  title: You Look Like API
+  version: 0.0.1
+  description: This is a swagger API definition for You Look Like application
+basePath: /you-look-like/api
+schemes:
+  - http
+paths:
+  /registration-request:
+    get:
+      summary: gets all registration requests and can be filtered by state
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: isApproved
+          required: false
+          type: boolean
+          description: returns only approved requests
+        - in: query
+          name: isDeleted
+          required: false
+          type: boolean
+          description: returns only rejected requests
+      responses:
+        200:
+          schema:
+            type: array
+            items:
+              $ref: "#definitions/RegistrationRequest"
+          description: OK
+  /registration-request/{id}:
+    put:
+      summary: approves the registration request with the id
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required: true
+          description: id fo registration request
+      responses:
+        200:
+          schema:
+            $ref: "#definitions/ReturnMessage"
+          description: request is approved
+        default:
+          description: error message
+    delete:
+      summary: approves the registration request with the id
+      responses:
+        200:
+          description: request is approved
+      deprecated: false
+
+definitions:
+  ReturnMessage:
+    type: object
+    properties:
+      message:
+        type: string
+  RegistrationRequest:
+    type: object
